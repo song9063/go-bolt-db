@@ -3,14 +3,14 @@ package boltdb
 import (
 	"database/sql"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type BoltDBValue map[string]string
 type BoltDBValueList []BoltDBValue
 
-
-func DBMysqlConnect(host string, port string, userName string, pwd string, dbName string) (*sql.DB, error){
+func DBMysqlConnect(host string, port string, userName string, pwd string, dbName string) (*sql.DB, error) {
 	var connectionString = "" + userName + ":" + pwd + "@tcp(" + host + ":" + port + ")/" + dbName
 	db, err := sql.Open("mysql", connectionString)
 	if err != nil {
@@ -21,14 +21,14 @@ func DBMysqlConnect(host string, port string, userName string, pwd string, dbNam
 }
 
 // Insert
-func DBMysqlInsert(dbConn *sql.Tx, strQuery string, args ...interface{}) (int64, error){
+func DBMysqlInsert(dbConn *sql.Tx, strQuery string, args ...interface{}) (int64, error) {
 	var insertId int64 = -1
 	res, mysqlErr := dbConn.Exec(strQuery, args...)
 	if mysqlErr != nil {
-		fmt.Println(mysqlErr)
+		//fmt.Println(mysqlErr)
 		return -1, mysqlErr
 
-	}else{
+	} else {
 		insertId, mysqlErr = res.LastInsertId()
 		if mysqlErr != nil {
 			return -2, mysqlErr
@@ -38,12 +38,12 @@ func DBMysqlInsert(dbConn *sql.Tx, strQuery string, args ...interface{}) (int64,
 }
 
 // Update or Delete
-func DBMysqlExec(dbConn *sql.Tx, strQuery string, args ...interface{}) (int64, error){
+func DBMysqlExec(dbConn *sql.Tx, strQuery string, args ...interface{}) (int64, error) {
 	var rows int64 = -1
 	res, mysqlErr := dbConn.Exec(strQuery, args...)
 	if mysqlErr != nil {
 		return -1, mysqlErr
-	}else {
+	} else {
 		rows, mysqlErr = res.RowsAffected()
 		if mysqlErr != nil {
 			return -2, mysqlErr
@@ -54,7 +54,7 @@ func DBMysqlExec(dbConn *sql.Tx, strQuery string, args ...interface{}) (int64, e
 }
 
 // Select
-func DBMysqlSelect(dbConn *sql.DB, strQuery string, args ...interface{}) (BoltDBValueList, error){
+func DBMysqlSelect(dbConn *sql.DB, strQuery string, args ...interface{}) (BoltDBValueList, error) {
 	res, mysqlErr := dbConn.Query(strQuery, args...)
 	if mysqlErr != nil {
 		fmt.Println("\n=================")
@@ -65,7 +65,7 @@ func DBMysqlSelect(dbConn *sql.DB, strQuery string, args ...interface{}) (BoltDB
 	}
 
 	cols, _ := res.Columns()
-	aList := make([]BoltDBValue,0,50)
+	aList := make([]BoltDBValue, 0, 50)
 	arColumns := make([][]byte, len(cols))
 	cPointers := make([]interface{}, len(cols))
 	for i, _ := range arColumns {
